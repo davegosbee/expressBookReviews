@@ -29,32 +29,29 @@ public_users.get('/',function (req, res) {
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
-  let book = books[req.params.isbn];
-  return res.json(book);
+  let isbn = req.params.isbn;
+  getBookByISBN(isbn).then((book) => res.json(book)).catch(() => res.json({"message":isbn}));
+   
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
     const author = req.params.author;
   
-    let filtered_books = Object.values(books).filter (book => book.author === author)
+    getAllBooksByAuthor(author).then((books)=> res.json({books})).catch(()=> res.json({}))
     
-    return res.json(filtered_books);
-      
-  
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;
-    getAllBooksByTitle(title).then(() => res.json(filtered_books)).catch(()=> res.json({}))
+    getAllBooksByTitle(title).then((filtered_books) => res.json(filtered_books)).catch(()=> res.json({}))
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
-  let bookreviews = books[req.params.isbn].reviews;
-  getAllReviewsByISBN(req.params.isbn).then(res.json(bookreviews));
+  getAllReviewsByISBN(req.params.isbn).then((bookreviews) => res.json(bookreviews)).catch(() => res.json({}));
  
 });
 
@@ -68,16 +65,32 @@ function getAllBooks() {
 function getAllBooksByTitle(title) {
     let myPromise = new Promise((resolve,reject) => {
         let filtered_books = Object.values(books).filter(book => book.title === title)  
-        resolve(books);
+        resolve(filtered_books);
     })
     return myPromise;
 }
 
-function getAllReviewsByISBN(title) {
+function getAllBooksByAuthor(author) {
     let myPromise = new Promise((resolve,reject) => {
-        let bookreviews = books[req.params.isbn].reviews;
-        resolve(bookreviews);
+        let filtered_books = Object.values(books).filter(book => book.author === author)  
+        resolve(filtered_books);
     })
+    return myPromise;
+}
+
+function getBookByISBN(isbn) {
+    let myPromise = new Promise((resolve,reject) => {
+        let book = books[isbn];
+        resolve(book);
+    });
+    return myPromise;
+}
+
+function getAllReviewsByISBN(isbn) {
+    let myPromise = new Promise((resolve,reject) => {
+        let bookreviews = books[isbn].reviews;
+        resolve(bookreviews);
+    });
     return myPromise;
 }
 
