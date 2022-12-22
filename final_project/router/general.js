@@ -21,9 +21,9 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.json(books);
-  
+    
+  getAllBooks().then((value) => res.json(value)).catch(() => res.json({}))
+    
 });
 
 // Get book details based on ISBN
@@ -47,17 +47,38 @@ public_users.get('/author/:author',function (req, res) {
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;
-  
-    let filtered_books = Object.values(books).filter (book => book.title === title)
-    
-    return res.json(filtered_books);
+    getAllBooksByTitle(title).then(() => res.json(filtered_books)).catch(()=> res.json({}))
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   let bookreviews = books[req.params.isbn].reviews;
-  return res.json(bookreviews);
+  getAllReviewsByISBN(req.params.isbn).then(res.json(bookreviews));
+ 
 });
+
+function getAllBooks() {
+    let myPromise = new Promise((resolve,reject) => {
+          resolve(books)
+    })
+    return myPromise;
+}
+
+function getAllBooksByTitle(title) {
+    let myPromise = new Promise((resolve,reject) => {
+        let filtered_books = Object.values(books).filter(book => book.title === title)  
+        resolve(books);
+    })
+    return myPromise;
+}
+
+function getAllReviewsByISBN(title) {
+    let myPromise = new Promise((resolve,reject) => {
+        let bookreviews = books[req.params.isbn].reviews;
+        resolve(bookreviews);
+    })
+    return myPromise;
+}
 
 module.exports.general = public_users;
