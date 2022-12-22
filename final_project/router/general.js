@@ -38,7 +38,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
 public_users.get('/author/:author',function (req, res) {
     const author = req.params.author;
   
-    getAllBooksByAuthor(author).then((books)=> res.json({books})).catch(()=> res.json({}))
+    getAllBooksByAuthor(author).then((books)=> res.json(books)).catch(()=> res.json({}))
     
 });
 
